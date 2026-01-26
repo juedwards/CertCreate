@@ -198,11 +198,19 @@ h4 { font-size: var(--text-xl); }
     border-bottom: 1px solid #D9F3CD;
 }
 
+.hero-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-xl);
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-lg);
+}
+
 .hero-logo {
     display: block;
-    max-width: 300px;
+    max-width: 200px;
     height: auto;
-    margin: 0 auto var(--spacing-lg) auto;
 }
 
 .hero-content {

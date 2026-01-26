@@ -7,10 +7,16 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <img src="{{ url_for('serve_images', filename='minecraft_logo.png') }}" 
-                 alt="Minecraft Education"
-                 class="hero-logo"
-                 onerror="this.style.display='none'">
+            <div class="hero-logos">
+                <img src="{{ url_for('serve_images', filename='minecraft_logo.png') }}" 
+                     alt="Minecraft Education"
+                     class="hero-logo"
+                     onerror="this.style.display='none'">
+                <img src="{{ url_for('serve_images', filename='bbc_bitesize.png') }}" 
+                     alt="BBC Bitesize"
+                     class="hero-logo"
+                     onerror="this.style.display='none'">
+            </div>
             <div class="hero-badge">AI FOUNDATIONS</div>
             <h1 class="hero-title">Certificate of Completion</h1>
             <p class="hero-subtitle">{{ settings.program_tagline }}</p>

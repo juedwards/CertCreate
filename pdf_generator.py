@@ -83,23 +83,44 @@ class CertificateGenerator:
         c.circle(x, y, 5, fill=1, stroke=0)
     
     def draw_logo(self, c, y_position):
-        """Draw the Minecraft Education logo."""
+        """Draw the Minecraft Education and BBC Bitesize logos."""
         logo_path = get_logo_path('minecraft_education')
+        bbc_logo_path = get_logo_path('bbc_bitesize')
+        
+        logo_width = PDF_SETTINGS['main_logo_width']
+        logo_height = logo_width * 0.4  # Approximate aspect ratio
+        spacing = 30  # Space between logos
+        
+        # Calculate positions for two logos side by side
+        total_width = (logo_width * 2) + spacing
+        start_x = (self.page_width - total_width) / 2
+        
+        logos_drawn = False
+        
+        # Draw Minecraft Education logo on the left
         if logo_path and os.path.exists(logo_path):
             try:
-                logo_width = PDF_SETTINGS['main_logo_width']
-                logo_height = logo_width * 0.4  # Approximate aspect ratio
-                x_position = (self.page_width - logo_width) / 2
-                c.drawImage(logo_path, x_position, y_position, 
+                c.drawImage(logo_path, start_x, y_position, 
                            width=logo_width, height=logo_height,
                            preserveAspectRatio=True, mask='auto')
-                return y_position - 20
+                logos_drawn = True
             except Exception as e:
-                print(f"Error loading logo: {e}")
-        else:
-            print(f"Logo not found at: {logo_path}")
+                print(f"Error loading Minecraft logo: {e}")
         
-        # Fallback: Draw text if logo not available
+        # Draw BBC Bitesize logo on the right
+        if bbc_logo_path and os.path.exists(bbc_logo_path):
+            try:
+                c.drawImage(bbc_logo_path, start_x + logo_width + spacing, y_position, 
+                           width=logo_width, height=logo_height,
+                           preserveAspectRatio=True, mask='auto')
+                logos_drawn = True
+            except Exception as e:
+                print(f"Error loading BBC Bitesize logo: {e}")
+        
+        if logos_drawn:
+            return y_position - 20
+        
+        # Fallback: Draw text if logos not available
         c.setFont("Helvetica-Bold", 24)
         c.setFillColor(self.primary_green)
         c.drawCentredString(self.page_width / 2, y_position + 20, "MINECRAFT EDUCATION")
