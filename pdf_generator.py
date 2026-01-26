@@ -83,16 +83,17 @@ class CertificateGenerator:
         c.circle(x, y, 5, fill=1, stroke=0)
     
     def draw_logo(self, c, y_position):
-        """Draw the Minecraft Education and BBC Bitesize logos."""
+        """Draw the Minecraft Education, BBC Bitesize, and Microsoft logos."""
         logo_path = get_logo_path('minecraft_education')
         bbc_logo_path = get_logo_path('bbc_bitesize')
+        microsoft_logo_path = get_logo_path('microsoft')
         
-        logo_width = PDF_SETTINGS['main_logo_width']
+        logo_width = PDF_SETTINGS['main_logo_width'] * 0.7  # Slightly smaller for 3 logos
         logo_height = logo_width * 0.4  # Approximate aspect ratio
-        spacing = 30  # Space between logos
+        spacing = 20  # Space between logos
         
-        # Calculate positions for two logos side by side
-        total_width = (logo_width * 2) + spacing
+        # Calculate positions for three logos side by side
+        total_width = (logo_width * 3) + (spacing * 2)
         start_x = (self.page_width - total_width) / 2
         
         logos_drawn = False
@@ -107,7 +108,7 @@ class CertificateGenerator:
             except Exception as e:
                 print(f"Error loading Minecraft logo: {e}")
         
-        # Draw BBC Bitesize logo on the right
+        # Draw BBC Bitesize logo in the middle
         if bbc_logo_path and os.path.exists(bbc_logo_path):
             try:
                 c.drawImage(bbc_logo_path, start_x + logo_width + spacing, y_position, 
@@ -116,6 +117,16 @@ class CertificateGenerator:
                 logos_drawn = True
             except Exception as e:
                 print(f"Error loading BBC Bitesize logo: {e}")
+        
+        # Draw Microsoft logo on the right
+        if microsoft_logo_path and os.path.exists(microsoft_logo_path):
+            try:
+                c.drawImage(microsoft_logo_path, start_x + (logo_width * 2) + (spacing * 2), y_position, 
+                           width=logo_width, height=logo_height,
+                           preserveAspectRatio=True, mask='auto')
+                logos_drawn = True
+            except Exception as e:
+                print(f"Error loading Microsoft logo: {e}")
         
         if logos_drawn:
             return y_position - 20

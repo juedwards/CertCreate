@@ -36,6 +36,9 @@ LOGOS = {
     
     # BBC Bitesize logo
     'bbc_bitesize': 'images/bbc_bitesize.png',
+    
+    # Microsoft logo
+    'microsoft': 'images/Microsoft-Logo.png',
 }
 
 # =============================================================================

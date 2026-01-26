@@ -200,21 +200,22 @@ h4 { font-size: var(--text-xl); }
 
 .hero-logos {
     display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     gap: var(--spacing-xl);
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     margin-bottom: var(--spacing-lg);
 }
 
 .hero-logo {
     display: block;
-    max-width: 200px;
+    max-width: 150px;
     height: auto;
 }
 
 .hero-content {
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
