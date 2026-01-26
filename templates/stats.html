@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Certificate Statistics{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1 class="page-title">Certificate Statistics</h1>
+        <p class="page-subtitle">AI Foundations Program</p>
+    </section>
+
+    <!-- Stats Cards -->
+    <section class="stats-section">
+        <div class="stats-cards">
+            <div class="stats-card">
+                <div class="stats-number">{{ stats.total_school_certificates }}</div>
+                <div class="stats-label">School Certificates</div>
+                <div class="stats-description">Schools participating in AI Foundations</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-number">{{ stats.total_student_certificates }}</div>
+                <div class="stats-label">Student Certificates</div>
+                <div class="stats-description">Students who completed the program</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Region Breakdown -->
+    <section class="region-section">
+        <h2 class="region-title">School Certificates by Region</h2>
+        <div class="region-breakdown">
+            {% for region in ['England', 'Wales', 'Northern Ireland', 'Scotland'] %}
+            <div class="region-item">
+                <div class="region-header">
+                    <span class="region-name">{{ region }}</span>
+                    <span class="region-count">{{ stats.regions[region] }} ({{ stats.region_percentages[region] }}%)</span>
+                </div>
+                <div class="region-bar-container">
+                    <div class="region-bar" style="width: {{ stats.region_percentages[region] }}%;"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Navigation -->
+    <section class="nav-section" style="margin-top: 2rem;">
+        <a href="{{ url_for('index') }}" class="btn btn-primary">
+            Back to Home
+        </a>
+    </section>
+</div>
+
+<style>
+.stats-section {
+    margin-bottom: var(--spacing-2xl);
+}
+
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-xl);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.stats-card {
+    background: var(--mc-bg-light);
+    border-radius: 8px;
+    padding: var(--spacing-2xl);
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    border-top: 4px solid var(--mc-green-primary);
+}
+
+.stats-number {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--mc-green-primary);
+    line-height: 1;
+    margin-bottom: var(--spacing-sm);
+}
+
+.stats-label {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--mc-text-dark);
+    margin-bottom: var(--spacing-sm);
+}
+
+.stats-description {
+    font-size: var(--text-sm);
+    color: var(--mc-text-muted);
+}
+
+/* Region Breakdown */
+.region-section {
+    max-width: 700px;
+    margin: 0 auto var(--spacing-2xl);
+}
+
+.region-title {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--mc-text-dark);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.region-breakdown {
+    background: var(--mc-bg-light);
+    border-radius: 8px;
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+}
+
+.region-item {
+    margin-bottom: var(--spacing-md);
+}
+
+.region-item:last-child {
+    margin-bottom: 0;
+}
+
+.region-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xs);
+}
+
+.region-name {
+    font-weight: 600;
+    color: var(--mc-text-dark);
+}
+
+.region-count {
+    font-size: var(--text-sm);
+    color: var(--mc-text-muted);
+}
+
+.region-bar-container {
+    background: #D9F3CD;
+    border-radius: 4px;
+    height: 24px;
+    overflow: hidden;
+}
+
+.region-bar {
+    background: var(--mc-green-primary);
+    height: 100%;
+    border-radius: 4px;
+    min-width: 2px;
+    transition: width 0.3s ease;
+}
+</style>
+{% endblock %}

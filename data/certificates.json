@@ -1,0 +1,57 @@
+{
+  "school_certificates": {
+    "5B5459DD": {
+      "school_name": "A very big school",
+      "region": "Northern Ireland",
+      "date": "2026-01-23T14:39:34.362696"
+    },
+    "3D79B58C": {
+      "school_name": "BETT School",
+      "region": "Northern Ireland",
+      "date": "2026-01-23T14:50:49.459572"
+    },
+    "320076AD": {
+      "school_name": "BETT School 2",
+      "region": "England",
+      "date": "2026-01-23T14:52:43.089384"
+    },
+    "68EEF357": {
+      "school_name": "Microsoft",
+      "region": "Scotland",
+      "date": "2026-01-23T14:56:19.046769"
+    },
+    "79D82F9B": {
+      "school_name": "Microsoft",
+      "region": "Northern Ireland",
+      "date": "2026-01-23T14:57:58.995808"
+    },
+    "7EDB450A": {
+      "school_name": "Highline High School",
+      "region": "England",
+      "date": "2026-01-23T15:49:37.722061"
+    },
+    "B2C900C1": {
+      "school_name": "dkga;lkdgf",
+      "region": "Wales",
+      "date": "2026-01-23T15:52:43.960962"
+    }
+  },
+  "student_certificates": {
+    "A2300D05": {
+      "school_name": "BETT School",
+      "date": "2026-01-23T14:52:14.686054"
+    },
+    "7A17DA92": {
+      "school_name": "Highline High School",
+      "date": "2026-01-23T15:50:04.833947"
+    },
+    "B635B5C5": {
+      "school_name": "Highline High School",
+      "date": "2026-01-23T15:50:55.963611"
+    }
+  },
+  "stats": {
+    "total_school_certificates": 7,
+    "total_student_certificates": 3
+  }
+}

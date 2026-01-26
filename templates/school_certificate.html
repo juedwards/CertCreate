@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}School Certificate{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Success Header -->
+    <section class="success-header">
+        <div class="success-icon">✅</div>
+        <h1 class="success-title">Certificate Generated!</h1>
+        <p class="success-subtitle">Your school certificate is ready for download</p>
+    </section>
+
+    <!-- Certificate Preview -->
+    <section class="certificate-preview-section">
+        <div class="certificate-preview">
+            <div class="preview-header">
+                <img src="{{ url_for('static', filename='logos/minecraft_logo.png') }}" 
+                     alt="Minecraft Education"
+                     class="preview-logo"
+                     onerror="this.style.display='none'">
+            </div>
+            
+            <div class="preview-badge">{{ settings.program_name }}</div>
+            
+            <h2 class="preview-title">{{ settings.school_certificate_title }}</h2>
+            
+            <p class="preview-text">This certifies that</p>
+            
+            <h3 class="preview-school-name">{{ school_name }}</h3>
+            
+            <p class="preview-text">represented by</p>
+            
+            <h4 class="preview-teacher-name">{{ teacher_name }}</h4>
+            
+            <p class="preview-text">
+                has successfully participated in the<br>
+                <strong>AI Foundations</strong> program
+            </p>
+            
+            <div class="preview-footer">
+                <div class="preview-date">
+                    <span class="preview-label">Date of Completion</span>
+                    <span class="preview-value">{{ completion_date }}</span>
+                </div>
+                <div class="preview-cert-id">
+                    <span class="preview-label">Certificate ID</span>
+                    <span class="preview-value">{{ cert_id }}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Actions -->
+    <section class="actions-section">
+        <div class="actions-card">
+            <a href="{{ url_for('download_school_certificate') }}" class="btn btn-primary btn-large">
+                <span class="btn-icon">⬇️</span>
+                Download School Certificate (PDF)
+            </a>
+            
+            <div class="actions-divider">
+                <span>Next Step</span>
+            </div>
+            
+            <a href="{{ url_for('student_certificates') }}" class="btn btn-secondary btn-large">
+                <span class="btn-icon">🎓</span>
+                Create Student Certificates
+            </a>
+        </div>
+    </section>
+
+    <!-- Info Box -->
+    <section class="info-box">
+        <div class="info-box-icon">💡</div>
+        <div class="info-box-content">
+            <h4>What's Next?</h4>
+            <p>You can now generate individual certificates for each student who participated in the AI Foundations program. 
+               Click "Create Student Certificates" to proceed.</p>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+# Minecraft Education AI Foundations Certificate Generator
+# Dependencies
+
+# Web Framework
+Flask>=2.3.0
+
+# PDF Generation
+reportlab>=4.0.0
+
+# Optional: Alternative PDF generation with WeasyPrint
+# Uncomment if you prefer WeasyPrint over ReportLab
+# WeasyPrint>=60.0
+
+# Production server (optional)
+gunicorn>=21.0.0
+
+# Development dependencies
+python-dotenv>=1.0.0

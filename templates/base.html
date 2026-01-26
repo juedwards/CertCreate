@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Foundations Certificate Generator{% endblock %} | Minecraft Education</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="https://education.minecraft.net/" target="_blank" class="logo-section">
+                <span class="logo-text">Minecraft Education</span>
+            </a>
+            <nav class="nav">
+                <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+                {% if session.get('school_name') %}
+                <a href="{{ url_for('student_certificates') }}" class="nav-link">Student Certificates</a>
+                <a href="{{ url_for('new_session') }}" class="nav-link">Start Over</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        {{ message }}
+                        <button class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="{{ url_for('static', filename='logos/minecraft_logo.png') }}" 
+                         alt="Minecraft Education" 
+                         class="footer-logo"
+                         onerror="this.style.display='none'">
+                    <p class="footer-tagline">Building Digital Skills and AI Literacy</p>
+                </div>
+                <div class="footer-links">
+                    <a href="https://education.minecraft.net" target="_blank">Minecraft Education</a>
+                    <a href="https://education.minecraft.net/en-us/discover/ai" target="_blank">AI Foundations</a>
+                    <a href="https://www.microsoft.com/en-us/privacy/privacystatement" target="_blank">Privacy Statement</a>
+                </div>
+            </div>
+            <div class="footer-privacy">
+                <p class="privacy-highlight"><strong>This app does not store any personal data.</strong> Names entered for certificates are used only to generate your PDF and are not saved to any database.</p>
+                <p>Your privacy is important to us. <a href="https://www.microsoft.com/en-us/privacy/privacystatement" target="_blank">Microsoft Privacy Statement</a> explains the personal data Microsoft processes, how Microsoft processes it, and for what purposes.</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; {{ now().year if now is defined else '2026' }} Mojang AB. TM Microsoft Corporation.</p>
+            </div>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

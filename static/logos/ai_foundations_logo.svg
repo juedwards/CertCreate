@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
+  <defs>
+    <linearGradient id="aiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9C27B0"/>
+      <stop offset="100%" style="stop-color:#1E88E5"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect x="2" y="2" width="196" height="76" rx="8" fill="url(#aiGrad)"/>
+  
+  <!-- AI Text -->
+  <text x="100" y="35" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">AI</text>
+  
+  <!-- FOUNDATIONS Text -->
+  <text x="100" y="58" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">FOUNDATIONS</text>
+  
+  <!-- Decorative elements -->
+  <circle cx="30" cy="40" r="8" fill="rgba(255,255,255,0.2)"/>
+  <circle cx="170" cy="40" r="8" fill="rgba(255,255,255,0.2)"/>
+</svg>

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Student Certificates{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <section class="page-header">
+        <h1 class="page-title">Student Certificates</h1>
+        <p class="page-subtitle">Generate individual certificates for students at <strong>{{ school_name }}</strong></p>
+    </section>
+
+    <!-- Student Form -->
+    <section class="form-section">
+        <div class="form-card">
+            <div class="form-header">
+                <h2 class="form-title">Generate Student Certificate</h2>
+                <p class="form-description">
+                    Enter the student's first name to create their personalized certificate of achievement.
+                </p>
+            </div>
+
+            <form action="{{ url_for('generate_student_cert') }}" method="POST" class="student-form">
+                <div class="form-group">
+                    <label for="student_name" class="form-label">
+                        <span class="label-icon">🎓</span>
+                        Student's First Name
+                    </label>
+                    <input type="text" 
+                           id="student_name" 
+                           name="student_name" 
+                           class="form-input"
+                           placeholder="Enter student's first name"
+                           required
+                           autocomplete="off"
+                           autofocus>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large">
+                    <span class="btn-icon">📜</span>
+                    Generate Certificate
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- School Info Card -->
+    <section class="school-info-section">
+        <div class="school-info-card">
+            <h3>School Information</h3>
+            <div class="school-info-details">
+                <div class="school-info-item">
+                    <span class="school-info-label">School:</span>
+                    <span class="school-info-value">{{ school_name }}</span>
+                </div>
+                <div class="school-info-item">
+                    <span class="school-info-label">Teacher:</span>
+                    <span class="school-info-value">{{ teacher_name }}</span>
+                </div>
+                <div class="school-info-item">
+                    <span class="school-info-label">Program:</span>
+                    <span class="school-info-value">{{ settings.program_name }}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tips Section -->
+    <section class="tips-section">
+        <h3 class="tips-title">💡 Tips</h3>
+        <ul class="tips-list">
+            <li>You can generate multiple certificates - just enter a new name after each download</li>
+            <li>Student certificates will include the school name automatically</li>
+            <li>Certificates are generated as A4 PDFs, perfect for printing</li>
+        </ul>
+    </section>
+
+    <!-- Navigation -->
+    <section class="nav-section">
+        <a href="{{ url_for('school_certificate') }}" class="btn btn-outline">
+            ← Back to School Certificate
+        </a>
+    </section>
+</div>
+{% endblock %}

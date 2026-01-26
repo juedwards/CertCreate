@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Student Certificate Ready{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Success Header -->
+    <section class="success-header">
+        <div class="success-icon">🎓</div>
+        <h1 class="success-title">Student Certificate Ready!</h1>
+        <p class="success-subtitle">Certificate for <strong>{{ student_name }}</strong> is ready for download</p>
+    </section>
+
+    <!-- Certificate Preview -->
+    <section class="certificate-preview-section">
+        <div class="certificate-preview student-certificate">
+            <div class="preview-header">
+                <img src="{{ url_for('static', filename='logos/minecraft_logo.png') }}" 
+                     alt="Minecraft Education"
+                     class="preview-logo"
+                     onerror="this.style.display='none'">
+            </div>
+            
+            <div class="preview-badge">{{ settings.program_name }}</div>
+            
+            <h2 class="preview-title">{{ settings.student_certificate_title }}</h2>
+            
+            <p class="preview-text">This certifies that</p>
+            
+            <h3 class="preview-student-name">{{ student_name }}</h3>
+            
+            <p class="preview-text">from</p>
+            
+            <h4 class="preview-school-name-small">{{ school_name }}</h4>
+            
+            <p class="preview-text">
+                has successfully completed the<br>
+                <strong>AI Foundations</strong> program
+            </p>
+            
+            <div class="preview-seal">
+                <img src="{{ url_for('static', filename='logos/certificate_seal.png') }}" 
+                     alt="Certificate Seal"
+                     onerror="this.parentElement.innerHTML='⭐'">
+            </div>
+        </div>
+    </section>
+
+    <!-- Actions -->
+    <section class="actions-section">
+        <div class="actions-card">
+            <a href="{{ url_for('download_student_certificate') }}" class="btn btn-primary btn-large">
+                <span class="btn-icon">⬇️</span>
+                Download Certificate (PDF)
+            </a>
+            
+            <div class="actions-divider">
+                <span>More Options</span>
+            </div>
+            
+            <a href="{{ url_for('student_certificates') }}" class="btn btn-secondary btn-large">
+                <span class="btn-icon">➕</span>
+                Create Another Student Certificate
+            </a>
+        </div>
+    </section>
+
+    <!-- Quick Navigation -->
+    <section class="quick-nav">
+        <a href="{{ url_for('school_certificate') }}" class="quick-nav-link">
+            📜 View School Certificate
+        </a>
+        <a href="{{ url_for('index') }}" class="quick-nav-link">
+            🏠 Start New Registration
+        </a>
+    </section>
+</div>
+{% endblock %}
