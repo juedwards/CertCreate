@@ -34,6 +34,11 @@
       "school_name": "dkga;lkdgf",
       "region": "Wales",
       "date": "2026-01-23T15:52:43.960962"
+    },
+    "A40393A8": {
+      "school_name": "Number #1 school",
+      "region": "Northern Ireland",
+      "date": "2026-01-26T15:27:56.028695"
     }
   },
   "student_certificates": {
@@ -51,7 +56,7 @@
     }
   },
   "stats": {
-    "total_school_certificates": 7,
+    "total_school_certificates": 8,
     "total_student_certificates": 3
   }
 }
