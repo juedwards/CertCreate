@@ -39,6 +39,11 @@
       "school_name": "Number #1 school",
       "region": "Northern Ireland",
       "date": "2026-01-26T15:27:56.028695"
+    },
+    "AA6E5E07": {
+      "school_name": "West Mon Comprehensive",
+      "region": "Wales",
+      "date": "2026-01-27T14:44:02.321327"
     }
   },
   "student_certificates": {
@@ -56,7 +61,7 @@
     }
   },
   "stats": {
-    "total_school_certificates": 8,
+    "total_school_certificates": 9,
     "total_student_certificates": 3
   }
 }

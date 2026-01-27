@@ -23,6 +23,9 @@ from pdf_generator import generate_school_certificate, generate_student_certific
 # Import data store for tracking certificates
 from data_store import record_school_certificate, record_student_certificate, get_stats
 
+# Import profanity filter
+from profanity_filter import check_all_fields, get_polite_rejection_message
+
 app = Flask(__name__)
 app.secret_key = FLASK_SETTINGS['SECRET_KEY']
 app.config['MAX_CONTENT_LENGTH'] = FLASK_SETTINGS['MAX_CONTENT_LENGTH']
@@ -54,6 +57,15 @@ def register():
     
     if not teacher_name or not school_name or not region:
         flash('Please fill in all required fields.', 'error')
+        return redirect(url_for('index'))
+    
+    # Check for inappropriate content
+    is_clean, field_name, _ = check_all_fields(
+        teacher_name=teacher_name,
+        school_name=school_name
+    )
+    if not is_clean:
+        flash(get_polite_rejection_message(), 'error')
         return redirect(url_for('index'))
     
     # Store in session for later use
@@ -151,6 +163,12 @@ def generate_student_cert():
     
     if not student_name:
         flash('Please enter the student\'s first name.', 'error')
+        return redirect(url_for('student_certificates'))
+    
+    # Check for inappropriate content
+    is_clean, _, _ = check_all_fields(student_name=student_name)
+    if not is_clean:
+        flash(get_polite_rejection_message(), 'error')
         return redirect(url_for('student_certificates'))
     
     # Generate unique certificate ID
