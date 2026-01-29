@@ -67,138 +67,91 @@
     </section>
 </div>
 
-<!-- Include jVectorMap CSS and JS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jvectormap@2.0.4/jquery-jvectormap.min.css">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jvectormap@2.0.4/jquery-jvectormap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jvectormap@2.0.4/maps/jquery-jvectormap-world-mill.min.js"></script>
+<!-- Leaflet CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <script>
-$(document).ready(function() {
-    // Country code mapping
-    var countryCodeMap = {
-        'Afghanistan': 'AF', 'Albania': 'AL', 'Algeria': 'DZ', 'Argentina': 'AR',
-        'Australia': 'AU', 'Austria': 'AT', 'Bangladesh': 'BD', 'Belgium': 'BE',
-        'Brazil': 'BR', 'Canada': 'CA', 'Chile': 'CL', 'China': 'CN',
-        'Colombia': 'CO', 'Croatia': 'HR', 'Czech Republic': 'CZ', 'Denmark': 'DK',
-        'Egypt': 'EG', 'Finland': 'FI', 'France': 'FR', 'Germany': 'DE',
-        'Greece': 'GR', 'Hungary': 'HU', 'India': 'IN', 'Indonesia': 'ID',
-        'Ireland': 'IE', 'Israel': 'IL', 'Italy': 'IT', 'Japan': 'JP',
-        'Kenya': 'KE', 'Malaysia': 'MY', 'Mexico': 'MX', 'Morocco': 'MA',
-        'Netherlands': 'NL', 'New Zealand': 'NZ', 'Nigeria': 'NG', 'Norway': 'NO',
-        'Pakistan': 'PK', 'Peru': 'PE', 'Philippines': 'PH', 'Poland': 'PL',
-        'Portugal': 'PT', 'Romania': 'RO', 'Russia': 'RU', 'Saudi Arabia': 'SA',
-        'Singapore': 'SG', 'South Africa': 'ZA', 'South Korea': 'KR', 'Spain': 'ES',
-        'Sweden': 'SE', 'Switzerland': 'CH', 'Taiwan': 'TW', 'Thailand': 'TH',
-        'Turkey': 'TR', 'Ukraine': 'UA', 'United Arab Emirates': 'AE',
-        'United Kingdom': 'GB', 'United States': 'US', 'Vietnam': 'VN',
-        // Legacy UK regions map to GB
-        'England': 'GB', 'Wales': 'GB', 'Northern Ireland': 'GB', 'Scotland': 'GB'
+document.addEventListener('DOMContentLoaded', function() {
+    // Country coordinates for markers
+    var countryCoords = {
+        'Afghanistan': [33.93, 67.71], 'Albania': [41.15, 20.17], 'Algeria': [28.03, 1.66], 'Argentina': [-38.42, -63.62],
+        'Australia': [-25.27, 133.78], 'Austria': [47.52, 14.55], 'Bangladesh': [23.68, 90.35], 'Belgium': [50.50, 4.47],
+        'Brazil': [-14.24, -51.93], 'Canada': [56.13, -106.35], 'Chile': [-35.68, -71.54], 'China': [35.86, 104.20],
+        'Colombia': [4.57, -74.30], 'Croatia': [45.10, 15.20], 'Czech Republic': [49.82, 15.47], 'Denmark': [56.26, 9.50],
+        'Egypt': [26.82, 30.80], 'Finland': [61.92, 25.75], 'France': [46.23, 2.21], 'Germany': [51.17, 10.45],
+        'Greece': [39.07, 21.82], 'Hungary': [47.16, 19.50], 'India': [20.59, 78.96], 'Indonesia': [-0.79, 113.92],
+        'Ireland': [53.14, -7.69], 'Israel': [31.05, 34.85], 'Italy': [41.87, 12.57], 'Japan': [36.20, 138.25],
+        'Kenya': [-0.02, 37.91], 'Malaysia': [4.21, 101.98], 'Mexico': [23.63, -102.55], 'Morocco': [31.79, -7.09],
+        'Netherlands': [52.13, 5.29], 'New Zealand': [-40.90, 174.89], 'Nigeria': [9.08, 8.68], 'Norway': [60.47, 8.47],
+        'Pakistan': [30.38, 69.35], 'Peru': [-9.19, -75.02], 'Philippines': [12.88, 121.77], 'Poland': [51.92, 19.15],
+        'Portugal': [39.40, -8.22], 'Romania': [45.94, 24.97], 'Russia': [61.52, 105.32], 'Saudi Arabia': [23.89, 45.08],
+        'Singapore': [1.35, 103.82], 'South Africa': [-30.56, 22.94], 'South Korea': [35.91, 127.77], 'Spain': [40.46, -3.75],
+        'Sweden': [60.13, 18.64], 'Switzerland': [46.82, 8.23], 'Taiwan': [23.70, 121.00], 'Thailand': [15.87, 100.99],
+        'Turkey': [38.96, 35.24], 'Ukraine': [48.38, 31.17], 'United Arab Emirates': [23.42, 53.85],
+        'United Kingdom': [55.38, -3.44], 'United States': [37.09, -95.71], 'Vietnam': [14.06, 108.28],
+        // Legacy UK regions
+        'England': [52.35, -1.17], 'Wales': [52.13, -3.78], 'Northern Ireland': [54.79, -6.49], 'Scotland': [56.49, -4.20]
     };
 
     // Country data from backend
     var countryData = {{ stats.countries | tojson | safe }};
-    
-    // Convert to jVectorMap format with country codes
-    var mapData = {};
-    for (var country in countryData) {
-        var code = countryCodeMap[country];
-        if (code) {
-            // Aggregate counts for same country code (e.g., UK regions)
-            mapData[code] = (mapData[code] || 0) + countryData[country];
-        }
-    }
 
-    // Create markers for countries with certificates
-    var markers = [];
-    var markerCoords = {
-        'AF': [33.93, 67.71], 'AL': [41.15, 20.17], 'DZ': [28.03, 1.66], 'AR': [-38.42, -63.62],
-        'AU': [-25.27, 133.78], 'AT': [47.52, 14.55], 'BD': [23.68, 90.35], 'BE': [50.50, 4.47],
-        'BR': [-14.24, -51.93], 'CA': [56.13, -106.35], 'CL': [-35.68, -71.54], 'CN': [35.86, 104.20],
-        'CO': [4.57, -74.30], 'HR': [45.10, 15.20], 'CZ': [49.82, 15.47], 'DK': [56.26, 9.50],
-        'EG': [26.82, 30.80], 'FI': [61.92, 25.75], 'FR': [46.23, 2.21], 'DE': [51.17, 10.45],
-        'GR': [39.07, 21.82], 'HU': [47.16, 19.50], 'IN': [20.59, 78.96], 'ID': [-0.79, 113.92],
-        'IE': [53.14, -7.69], 'IL': [31.05, 34.85], 'IT': [41.87, 12.57], 'JP': [36.20, 138.25],
-        'KE': [-0.02, 37.91], 'MY': [4.21, 101.98], 'MX': [23.63, -102.55], 'MA': [31.79, -7.09],
-        'NL': [52.13, 5.29], 'NZ': [-40.90, 174.89], 'NG': [9.08, 8.68], 'NO': [60.47, 8.47],
-        'PK': [30.38, 69.35], 'PE': [-9.19, -75.02], 'PH': [12.88, 121.77], 'PL': [51.92, 19.15],
-        'PT': [39.40, -8.22], 'RO': [45.94, 24.97], 'RU': [61.52, 105.32], 'SA': [23.89, 45.08],
-        'SG': [1.35, 103.82], 'ZA': [-30.56, 22.94], 'KR': [35.91, 127.77], 'ES': [40.46, -3.75],
-        'SE': [60.13, 18.64], 'CH': [46.82, 8.23], 'TW': [23.70, 121.00], 'TH': [15.87, 100.99],
-        'TR': [38.96, 35.24], 'UA': [48.38, 31.17], 'AE': [23.42, 53.85],
-        'GB': [55.38, -3.44], 'US': [37.09, -95.71], 'VN': [14.06, 108.28]
-    };
-
-    var index = 0;
-    for (var code in mapData) {
-        if (markerCoords[code]) {
-            markers.push({
-                latLng: markerCoords[code],
-                name: code + ': ' + mapData[code] + ' certificate(s)',
-                count: mapData[code]
-            });
-        }
-        index++;
-    }
-
-    $('#world-map').vectorMap({
-        map: 'world_mill',
-        backgroundColor: '#f5f5f5',
-        zoomOnScroll: true,
-        regionStyle: {
-            initial: {
-                fill: '#e4e4e4',
-                "fill-opacity": 1,
-                stroke: '#ffffff',
-                "stroke-width": 0.5,
-                "stroke-opacity": 1
-            },
-            hover: {
-                "fill-opacity": 0.8,
-                cursor: 'pointer'
-            }
-        },
-        series: {
-            regions: [{
-                values: mapData,
-                scale: ['#D9F3CD', '#3C8517'],
-                normalizeFunction: 'polynomial'
-            }]
-        },
-        markers: markers,
-        markerStyle: {
-            initial: {
-                fill: '#3C8517',
-                stroke: '#ffffff',
-                "stroke-width": 2,
-                r: 8
-            },
-            hover: {
-                fill: '#2d6812',
-                stroke: '#ffffff',
-                "stroke-width": 2,
-                r: 10
-            }
-        },
-        labels: {
-            markers: {
-                render: function(index) {
-                    return markers[index].count;
-                },
-                offsets: function(index) {
-                    return [0, -15];
-                }
-            }
-        },
-        onMarkerTipShow: function(e, label, index) {
-            label.html(markers[index].name);
-        },
-        onRegionTipShow: function(e, label, code) {
-            if (mapData[code]) {
-                label.html(label.html() + '<br><strong>' + mapData[code] + ' certificate(s)</strong>');
-            }
-        }
+    // Initialize the map
+    var map = L.map('world-map', {
+        center: [20, 0],
+        zoom: 2,
+        minZoom: 1,
+        maxZoom: 6,
+        worldCopyJump: true
     });
+
+    // Add tile layer (map background)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20
+    }).addTo(map);
+
+    // Find max count for scaling
+    var maxCount = 0;
+    for (var country in countryData) {
+        if (countryData[country] > maxCount) {
+            maxCount = countryData[country];
+        }
+    }
+
+    // Add markers for each country with certificates
+    for (var country in countryData) {
+        var coords = countryCoords[country];
+        if (coords) {
+            var count = countryData[country];
+            // Scale radius based on count (min 15, max 40)
+            var radius = Math.max(15, Math.min(40, 15 + (count / Math.max(maxCount, 1)) * 25));
+            
+            // Create circle marker
+            var marker = L.circleMarker(coords, {
+                radius: radius,
+                fillColor: '#3C8517',
+                color: '#ffffff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.7
+            }).addTo(map);
+
+            // Add popup
+            marker.bindPopup('<strong>' + country + '</strong><br>' + count + ' certificate(s)');
+            
+            // Add label with count
+            var icon = L.divIcon({
+                className: 'map-marker-label',
+                html: '<span>' + count + '</span>',
+                iconSize: [30, 20],
+                iconAnchor: [15, 10]
+            });
+            L.marker(coords, {icon: icon}).addTo(map);
+        }
+    }
 });
 </script>
 
@@ -268,6 +221,25 @@ $(document).ready(function() {
 #world-map {
     width: 100%;
     height: 450px;
+    border-radius: 8px;
+}
+
+/* Map marker labels */
+.map-marker-label {
+    background: transparent;
+}
+
+.map-marker-label span {
+    display: block;
+    background: #3C8517;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 /* Country Breakdown */
@@ -328,16 +300,6 @@ $(document).ready(function() {
     text-align: center;
     color: var(--mc-text-muted);
     padding: var(--spacing-xl);
-}
-
-/* jVectorMap marker labels */
-.jvectormap-marker-label {
-    background: var(--mc-green-primary);
-    color: white;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: bold;
 }
 </style>
 {% endblock %}

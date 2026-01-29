@@ -49,6 +49,11 @@
       "school_name": "Microsoft",
       "region": "Scotland",
       "date": "2026-01-29T15:29:48.668571"
+    },
+    "DAF0A159": {
+      "school_name": "Another school in England",
+      "region": "Belgium",
+      "date": "2026-01-29T16:38:47.617298"
     }
   },
   "student_certificates": {
@@ -66,7 +71,7 @@
     }
   },
   "stats": {
-    "total_school_certificates": 10,
+    "total_school_certificates": 11,
     "total_student_certificates": 3
   }
 }
