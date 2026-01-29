@@ -44,6 +44,11 @@
       "school_name": "West Mon Comprehensive",
       "region": "Wales",
       "date": "2026-01-27T14:44:02.321327"
+    },
+    "269FBAE7": {
+      "school_name": "Microsoft",
+      "region": "Scotland",
+      "date": "2026-01-29T15:29:48.668571"
     }
   },
   "student_certificates": {
@@ -61,7 +66,7 @@
     }
   },
   "stats": {
-    "total_school_certificates": 9,
+    "total_school_certificates": 10,
     "total_student_certificates": 3
   }
 }

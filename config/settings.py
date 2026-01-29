@@ -34,9 +34,6 @@ LOGOS = {
     # Background pattern for certificates (optional)
     'certificate_background': 'images/certificate_background.png',
     
-    # BBC Bitesize logo
-    'bbc_bitesize': 'images/bbc_bitesize.png',
-    
     # RGB Elevate logo
     'microsoft': 'images/RGB-Elevate.png',
 }

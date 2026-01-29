@@ -7,7 +7,7 @@ Generates A4 PDF certificates using ReportLab.
 import os
 from datetime import datetime
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
+from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.units import mm, cm
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
@@ -46,7 +46,7 @@ class CertificateGenerator:
     
     def __init__(self, output_path):
         self.output_path = output_path
-        self.page_width, self.page_height = A4
+        self.page_width, self.page_height = landscape(A4)
         self.margin = 50
         
         # Colors - using official Minecraft Education branding
@@ -83,17 +83,16 @@ class CertificateGenerator:
         c.circle(x, y, 5, fill=1, stroke=0)
     
     def draw_logo(self, c, y_position):
-        """Draw the Minecraft Education, BBC Bitesize, and Microsoft logos."""
+        """Draw the Minecraft Education and Microsoft logos."""
         logo_path = get_logo_path('minecraft_education')
-        bbc_logo_path = get_logo_path('bbc_bitesize')
         microsoft_logo_path = get_logo_path('microsoft')
         
-        logo_width = PDF_SETTINGS['main_logo_width'] * 0.7  # Slightly smaller for 3 logos
+        logo_width = PDF_SETTINGS['main_logo_width'] * 0.8  # Slightly larger for 2 logos
         logo_height = logo_width * 0.4  # Approximate aspect ratio
-        spacing = 20  # Space between logos
+        spacing = 40  # Space between logos
         
-        # Calculate positions for three logos side by side
-        total_width = (logo_width * 3) + (spacing * 2)
+        # Calculate positions for two logos side by side
+        total_width = (logo_width * 2) + spacing
         start_x = (self.page_width - total_width) / 2
         
         logos_drawn = False
@@ -108,20 +107,10 @@ class CertificateGenerator:
             except Exception as e:
                 print(f"Error loading Minecraft logo: {e}")
         
-        # Draw BBC Bitesize logo in the middle
-        if bbc_logo_path and os.path.exists(bbc_logo_path):
-            try:
-                c.drawImage(bbc_logo_path, start_x + logo_width + spacing, y_position, 
-                           width=logo_width, height=logo_height,
-                           preserveAspectRatio=True, mask='auto')
-                logos_drawn = True
-            except Exception as e:
-                print(f"Error loading BBC Bitesize logo: {e}")
-        
         # Draw Microsoft logo on the right
         if microsoft_logo_path and os.path.exists(microsoft_logo_path):
             try:
-                c.drawImage(microsoft_logo_path, start_x + (logo_width * 2) + (spacing * 2), y_position, 
+                c.drawImage(microsoft_logo_path, start_x + logo_width + spacing, y_position, 
                            width=logo_width, height=logo_height,
                            preserveAspectRatio=True, mask='auto')
                 logos_drawn = True
@@ -186,8 +175,8 @@ class CertificateGenerator:
 def generate_school_certificate(school_name, teacher_name, completion_date, output_path, cert_id):
     """Generate a school certificate of participation."""
     
-    c = canvas.Canvas(output_path, pagesize=A4)
-    page_width, page_height = A4
+    c = canvas.Canvas(output_path, pagesize=landscape(A4))
+    page_width, page_height = landscape(A4)
     
     generator = CertificateGenerator(output_path)
     
@@ -293,8 +282,8 @@ def generate_school_certificate(school_name, teacher_name, completion_date, outp
 def generate_student_certificate(student_name, school_name, output_path, cert_id):
     """Generate a student certificate of achievement."""
     
-    c = canvas.Canvas(output_path, pagesize=A4)
-    page_width, page_height = A4
+    c = canvas.Canvas(output_path, pagesize=landscape(A4))
+    page_width, page_height = landscape(A4)
     
     generator = CertificateGenerator(output_path)
     
