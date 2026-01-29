@@ -7,7 +7,7 @@
     <!-- Page Header -->
     <section class="page-header">
         <h1 class="page-title">Certificate Statistics</h1>
-        <p class="page-subtitle">AI Foundations Program</p>
+        <p class="page-subtitle">AI Foundations Program - Global Participation</p>
     </section>
 
     <!-- Stats Cards -->
@@ -23,23 +23,38 @@
                 <div class="stats-label">Student Certificates</div>
                 <div class="stats-description">Students who completed the program</div>
             </div>
+            <div class="stats-card">
+                <div class="stats-number">{{ stats.countries|length }}</div>
+                <div class="stats-label">Countries</div>
+                <div class="stats-description">Countries with participating schools</div>
+            </div>
         </div>
     </section>
 
-    <!-- Region Breakdown -->
-    <section class="region-section">
-        <h2 class="region-title">School Certificates by Region</h2>
-        <div class="region-breakdown">
-            {% for region in ['England', 'Wales', 'Northern Ireland', 'Scotland'] %}
-            <div class="region-item">
-                <div class="region-header">
-                    <span class="region-name">{{ region }}</span>
-                    <span class="region-count">{{ stats.regions[region] }} ({{ stats.region_percentages[region] }}%)</span>
+    <!-- World Map -->
+    <section class="map-section">
+        <h2 class="section-title">Global Certificate Distribution</h2>
+        <div class="map-container">
+            <div id="world-map"></div>
+        </div>
+    </section>
+
+    <!-- Country Breakdown -->
+    <section class="country-section">
+        <h2 class="section-title">Certificates by Country</h2>
+        <div class="country-breakdown">
+            {% for country, count in stats.countries|dictsort(by='value', reverse=true) %}
+            <div class="country-item">
+                <div class="country-header">
+                    <span class="country-name">{{ country }}</span>
+                    <span class="country-count">{{ count }} ({{ stats.country_percentages[country] }}%)</span>
                 </div>
-                <div class="region-bar-container">
-                    <div class="region-bar" style="width: {{ stats.region_percentages[region] }}%;"></div>
+                <div class="country-bar-container">
+                    <div class="country-bar" style="width: {{ stats.country_percentages[country] }}%;"></div>
                 </div>
             </div>
+            {% else %}
+            <p class="no-data">No certificates have been generated yet.</p>
             {% endfor %}
         </div>
     </section>
@@ -52,6 +67,141 @@
     </section>
 </div>
 
+<!-- Include jVectorMap CSS and JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jvectormap@2.0.4/jquery-jvectormap.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jvectormap@2.0.4/jquery-jvectormap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jvectormap@2.0.4/maps/jquery-jvectormap-world-mill.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Country code mapping
+    var countryCodeMap = {
+        'Afghanistan': 'AF', 'Albania': 'AL', 'Algeria': 'DZ', 'Argentina': 'AR',
+        'Australia': 'AU', 'Austria': 'AT', 'Bangladesh': 'BD', 'Belgium': 'BE',
+        'Brazil': 'BR', 'Canada': 'CA', 'Chile': 'CL', 'China': 'CN',
+        'Colombia': 'CO', 'Croatia': 'HR', 'Czech Republic': 'CZ', 'Denmark': 'DK',
+        'Egypt': 'EG', 'Finland': 'FI', 'France': 'FR', 'Germany': 'DE',
+        'Greece': 'GR', 'Hungary': 'HU', 'India': 'IN', 'Indonesia': 'ID',
+        'Ireland': 'IE', 'Israel': 'IL', 'Italy': 'IT', 'Japan': 'JP',
+        'Kenya': 'KE', 'Malaysia': 'MY', 'Mexico': 'MX', 'Morocco': 'MA',
+        'Netherlands': 'NL', 'New Zealand': 'NZ', 'Nigeria': 'NG', 'Norway': 'NO',
+        'Pakistan': 'PK', 'Peru': 'PE', 'Philippines': 'PH', 'Poland': 'PL',
+        'Portugal': 'PT', 'Romania': 'RO', 'Russia': 'RU', 'Saudi Arabia': 'SA',
+        'Singapore': 'SG', 'South Africa': 'ZA', 'South Korea': 'KR', 'Spain': 'ES',
+        'Sweden': 'SE', 'Switzerland': 'CH', 'Taiwan': 'TW', 'Thailand': 'TH',
+        'Turkey': 'TR', 'Ukraine': 'UA', 'United Arab Emirates': 'AE',
+        'United Kingdom': 'GB', 'United States': 'US', 'Vietnam': 'VN',
+        // Legacy UK regions map to GB
+        'England': 'GB', 'Wales': 'GB', 'Northern Ireland': 'GB', 'Scotland': 'GB'
+    };
+
+    // Country data from backend
+    var countryData = {{ stats.countries | tojson | safe }};
+    
+    // Convert to jVectorMap format with country codes
+    var mapData = {};
+    for (var country in countryData) {
+        var code = countryCodeMap[country];
+        if (code) {
+            // Aggregate counts for same country code (e.g., UK regions)
+            mapData[code] = (mapData[code] || 0) + countryData[country];
+        }
+    }
+
+    // Create markers for countries with certificates
+    var markers = [];
+    var markerCoords = {
+        'AF': [33.93, 67.71], 'AL': [41.15, 20.17], 'DZ': [28.03, 1.66], 'AR': [-38.42, -63.62],
+        'AU': [-25.27, 133.78], 'AT': [47.52, 14.55], 'BD': [23.68, 90.35], 'BE': [50.50, 4.47],
+        'BR': [-14.24, -51.93], 'CA': [56.13, -106.35], 'CL': [-35.68, -71.54], 'CN': [35.86, 104.20],
+        'CO': [4.57, -74.30], 'HR': [45.10, 15.20], 'CZ': [49.82, 15.47], 'DK': [56.26, 9.50],
+        'EG': [26.82, 30.80], 'FI': [61.92, 25.75], 'FR': [46.23, 2.21], 'DE': [51.17, 10.45],
+        'GR': [39.07, 21.82], 'HU': [47.16, 19.50], 'IN': [20.59, 78.96], 'ID': [-0.79, 113.92],
+        'IE': [53.14, -7.69], 'IL': [31.05, 34.85], 'IT': [41.87, 12.57], 'JP': [36.20, 138.25],
+        'KE': [-0.02, 37.91], 'MY': [4.21, 101.98], 'MX': [23.63, -102.55], 'MA': [31.79, -7.09],
+        'NL': [52.13, 5.29], 'NZ': [-40.90, 174.89], 'NG': [9.08, 8.68], 'NO': [60.47, 8.47],
+        'PK': [30.38, 69.35], 'PE': [-9.19, -75.02], 'PH': [12.88, 121.77], 'PL': [51.92, 19.15],
+        'PT': [39.40, -8.22], 'RO': [45.94, 24.97], 'RU': [61.52, 105.32], 'SA': [23.89, 45.08],
+        'SG': [1.35, 103.82], 'ZA': [-30.56, 22.94], 'KR': [35.91, 127.77], 'ES': [40.46, -3.75],
+        'SE': [60.13, 18.64], 'CH': [46.82, 8.23], 'TW': [23.70, 121.00], 'TH': [15.87, 100.99],
+        'TR': [38.96, 35.24], 'UA': [48.38, 31.17], 'AE': [23.42, 53.85],
+        'GB': [55.38, -3.44], 'US': [37.09, -95.71], 'VN': [14.06, 108.28]
+    };
+
+    var index = 0;
+    for (var code in mapData) {
+        if (markerCoords[code]) {
+            markers.push({
+                latLng: markerCoords[code],
+                name: code + ': ' + mapData[code] + ' certificate(s)',
+                count: mapData[code]
+            });
+        }
+        index++;
+    }
+
+    $('#world-map').vectorMap({
+        map: 'world_mill',
+        backgroundColor: '#f5f5f5',
+        zoomOnScroll: true,
+        regionStyle: {
+            initial: {
+                fill: '#e4e4e4',
+                "fill-opacity": 1,
+                stroke: '#ffffff',
+                "stroke-width": 0.5,
+                "stroke-opacity": 1
+            },
+            hover: {
+                "fill-opacity": 0.8,
+                cursor: 'pointer'
+            }
+        },
+        series: {
+            regions: [{
+                values: mapData,
+                scale: ['#D9F3CD', '#3C8517'],
+                normalizeFunction: 'polynomial'
+            }]
+        },
+        markers: markers,
+        markerStyle: {
+            initial: {
+                fill: '#3C8517',
+                stroke: '#ffffff',
+                "stroke-width": 2,
+                r: 8
+            },
+            hover: {
+                fill: '#2d6812',
+                stroke: '#ffffff',
+                "stroke-width": 2,
+                r: 10
+            }
+        },
+        labels: {
+            markers: {
+                render: function(index) {
+                    return markers[index].count;
+                },
+                offsets: function(index) {
+                    return [0, -15];
+                }
+            }
+        },
+        onMarkerTipShow: function(e, label, index) {
+            label.html(markers[index].name);
+        },
+        onRegionTipShow: function(e, label, code) {
+            if (mapData[code]) {
+                label.html(label.html() + '<br><strong>' + mapData[code] + ' certificate(s)</strong>');
+            }
+        }
+    });
+});
+</script>
+
 <style>
 .stats-section {
     margin-bottom: var(--spacing-2xl);
@@ -59,23 +209,23 @@
 
 .stats-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: var(--spacing-xl);
-    max-width: 700px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
 .stats-card {
     background: var(--mc-bg-light);
     border-radius: 8px;
-    padding: var(--spacing-2xl);
+    padding: var(--spacing-xl);
     text-align: center;
     box-shadow: var(--shadow-md);
     border-top: 4px solid var(--mc-green-primary);
 }
 
 .stats-number {
-    font-size: 4rem;
+    font-size: 3rem;
     font-weight: 700;
     color: var(--mc-green-primary);
     line-height: 1;
@@ -83,7 +233,7 @@
 }
 
 .stats-label {
-    font-size: var(--text-xl);
+    font-size: var(--text-lg);
     font-weight: 600;
     color: var(--mc-text-dark);
     margin-bottom: var(--spacing-sm);
@@ -94,13 +244,13 @@
     color: var(--mc-text-muted);
 }
 
-/* Region Breakdown */
-.region-section {
-    max-width: 700px;
+/* Map Section */
+.map-section {
+    max-width: 1000px;
     margin: 0 auto var(--spacing-2xl);
 }
 
-.region-title {
+.section-title {
     font-size: var(--text-xl);
     font-weight: 600;
     color: var(--mc-text-dark);
@@ -108,50 +258,86 @@
     text-align: center;
 }
 
-.region-breakdown {
+.map-container {
+    background: var(--mc-bg-light);
+    border-radius: 8px;
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+}
+
+#world-map {
+    width: 100%;
+    height: 450px;
+}
+
+/* Country Breakdown */
+.country-section {
+    max-width: 700px;
+    margin: 0 auto var(--spacing-2xl);
+}
+
+.country-breakdown {
     background: var(--mc-bg-light);
     border-radius: 8px;
     padding: var(--spacing-xl);
     box-shadow: var(--shadow-md);
+    max-height: 400px;
+    overflow-y: auto;
 }
 
-.region-item {
+.country-item {
     margin-bottom: var(--spacing-md);
 }
 
-.region-item:last-child {
+.country-item:last-child {
     margin-bottom: 0;
 }
 
-.region-header {
+.country-header {
     display: flex;
     justify-content: space-between;
     margin-bottom: var(--spacing-xs);
 }
 
-.region-name {
+.country-name {
     font-weight: 600;
     color: var(--mc-text-dark);
 }
 
-.region-count {
+.country-count {
     font-size: var(--text-sm);
     color: var(--mc-text-muted);
 }
 
-.region-bar-container {
+.country-bar-container {
     background: #D9F3CD;
     border-radius: 4px;
     height: 24px;
     overflow: hidden;
 }
 
-.region-bar {
+.country-bar {
     background: var(--mc-green-primary);
     height: 100%;
     border-radius: 4px;
     min-width: 2px;
     transition: width 0.3s ease;
+}
+
+.no-data {
+    text-align: center;
+    color: var(--mc-text-muted);
+    padding: var(--spacing-xl);
+}
+
+/* jVectorMap marker labels */
+.jvectormap-marker-label {
+    background: var(--mc-green-primary);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
 }
 </style>
 {% endblock %}

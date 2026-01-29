@@ -100,29 +100,45 @@ def get_stats():
     Get certificate statistics.
     
     Returns:
-        dict with total_school_certificates, total_student_certificates, and region breakdown
+        dict with total_school_certificates, total_student_certificates, and country breakdown
     """
     with _lock:
         data = _load_data()
         stats = data['stats'].copy()
         
-        # Calculate region breakdown for school certificates
+        # Calculate country breakdown for school certificates
+        country_counts = {}
+        
+        for cert_id, cert_data in data['school_certificates'].items():
+            country = cert_data.get('region', 'Unknown')
+            if country:
+                country_counts[country] = country_counts.get(country, 0) + 1
+        
+        stats['countries'] = country_counts
+        
+        # Calculate percentages
+        total = stats['total_school_certificates']
+        if total > 0:
+            stats['country_percentages'] = {
+                country: round((count / total) * 100, 1)
+                for country, count in country_counts.items()
+            }
+        else:
+            stats['country_percentages'] = {}
+        
+        # Legacy region support (map old UK regions to United Kingdom)
         region_counts = {
             'England': 0,
             'Wales': 0,
             'Northern Ireland': 0,
             'Scotland': 0
         }
-        
         for cert_id, cert_data in data['school_certificates'].items():
             region = cert_data.get('region')
             if region in region_counts:
                 region_counts[region] += 1
         
         stats['regions'] = region_counts
-        
-        # Calculate percentages
-        total = stats['total_school_certificates']
         if total > 0:
             stats['region_percentages'] = {
                 region: round((count / total) * 100, 1)
