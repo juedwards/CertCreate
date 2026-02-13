@@ -11,10 +11,22 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
-# Use environment variable for writable directories (Azure needs /tmp or /home)
-# Default to local directories for development
-DATA_DIR = os.environ.get('DATA_DIR', os.path.join(BASE_DIR, 'data'))
-CERTIFICATES_DIR = os.environ.get('CERTIFICATES_DIR', os.path.join(BASE_DIR, 'certificates'))
+# Auto-detect Azure environment (Azure sets WEBSITE_SITE_NAME)
+IS_AZURE = os.environ.get('WEBSITE_SITE_NAME') is not None
+
+# Use writable directories - Azure needs /tmp, local dev uses project folders
+if IS_AZURE:
+    # Azure App Service - use /tmp for writable storage
+    DATA_DIR = os.environ.get('DATA_DIR', '/tmp/certcreate/data')
+    CERTIFICATES_DIR = os.environ.get('CERTIFICATES_DIR', '/tmp/certcreate/certificates')
+else:
+    # Local development
+    DATA_DIR = os.environ.get('DATA_DIR', os.path.join(BASE_DIR, 'data'))
+    CERTIFICATES_DIR = os.environ.get('CERTIFICATES_DIR', os.path.join(BASE_DIR, 'certificates'))
+
+# Ensure directories exist
+os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(CERTIFICATES_DIR, exist_ok=True)
 
 # =============================================================================
 # LOGO CONFIGURATION
