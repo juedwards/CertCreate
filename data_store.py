@@ -11,8 +11,10 @@ import os
 from datetime import datetime
 from threading import Lock
 
+from config.settings import DATA_DIR
+
 # File path for the data store
-DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'certificates.json')
+DATA_FILE = os.path.join(DATA_DIR, 'certificates.json')
 
 # Thread lock for safe file access
 _lock = Lock()

@@ -10,7 +10,11 @@ import os
 # Base directory configuration
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
-CERTIFICATES_DIR = os.path.join(BASE_DIR, 'certificates')
+
+# Use environment variable for writable directories (Azure needs /tmp or /home)
+# Default to local directories for development
+DATA_DIR = os.environ.get('DATA_DIR', os.path.join(BASE_DIR, 'data'))
+CERTIFICATES_DIR = os.environ.get('CERTIFICATES_DIR', os.path.join(BASE_DIR, 'certificates'))
 
 # =============================================================================
 # LOGO CONFIGURATION
