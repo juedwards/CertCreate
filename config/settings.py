@@ -125,8 +125,8 @@ PDF_SETTINGS = {
 # =============================================================================
 
 FLASK_SETTINGS = {
-    'SECRET_KEY': 'your-secret-key-change-in-production',
-    'DEBUG': True,
+    'SECRET_KEY': os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production'),
+    'DEBUG': os.environ.get('FLASK_DEBUG', 'False').lower() == 'true',
     'MAX_CONTENT_LENGTH': 16 * 1024 * 1024,  # 16MB max upload
 }
 
