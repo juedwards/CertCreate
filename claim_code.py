@@ -56,8 +56,13 @@ def verify_claim_code(submitted):
 
 
 def is_valid_admin_token(token):
-    """Return True if the supplied token matches the configured admin link token."""
-    return hmac.compare_digest(str(token), str(CLAIM_CODE_SETTINGS['admin_token']))
+    """Return True if the supplied token matches the configured admin link token.
+
+    Whitespace is stripped first so a stray space introduced when copying the
+    link (e.g. an encoded %20) still resolves correctly.
+    """
+    submitted = ''.join(str(token).split())
+    return hmac.compare_digest(submitted, str(CLAIM_CODE_SETTINGS['admin_token']))
 
 
 def seconds_until_rotation():
