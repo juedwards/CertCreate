@@ -60,20 +60,18 @@ LOGOS = {
 
 CERTIFICATE_SETTINGS = {
     # Program information
-    'program_name': 'AI Foundations',
-    'program_tagline': 'Building Digital Skills and AI Literacy with Minecraft',
+    'program_name': 'Minecraft Education',
+    'program_tagline': 'Claim your credential for completing Minecraft Education training',
     'organization': 'Minecraft Education',
     
-    # Certificate titles
-    'school_certificate_title': 'Certificate of Participation',
-    'student_certificate_title': 'Certificate of Achievement',
+    # Certificate title
+    'certificate_title': 'Certificate of Completion',
     
-    # Certificate messages
-    'school_certificate_message': 'This certifies that {school_name} has successfully participated in the AI Foundations program, demonstrating commitment to building AI literacy and digital skills.',
-    'student_certificate_message': 'This certifies that {student_name} from {school_name} has successfully completed the AI Foundations program.',
+    # Certificate message ({name} and {school_name} are substituted)
+    'certificate_message': 'This credential certifies that {name} from {school_name} has successfully completed Minecraft Education training.',
     
     # Footer text
-    'footer_text': '© Minecraft Education - Building Digital Skills and AI Literacy',
+    'footer_text': '© Minecraft Education',
 }
 
 # =============================================================================
@@ -144,6 +142,20 @@ FLASK_SETTINGS = {
     'SECRET_KEY': os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production'),
     'DEBUG': os.environ.get('FLASK_DEBUG', 'False').lower() == 'true',
     'MAX_CONTENT_LENGTH': 16 * 1024 * 1024,  # 16MB max upload
+}
+
+# =============================================================================
+# CLAIM CODE SETTINGS
+# =============================================================================
+# Attendees must enter a daily-rotating claim code to generate a certificate.
+# - 'secret' seeds the code generation (keep this private; change in production).
+# - 'admin_token' is the unguessable token in the hidden URL used to view today's
+#   code, e.g. /claim-code/<admin_token>. Change it in production.
+
+CLAIM_CODE_SETTINGS = {
+    'secret': os.environ.get('CLAIM_CODE_SECRET', 'change-me-claim-code-secret'),
+    'admin_token': os.environ.get('CLAIM_CODE_ADMIN_TOKEN', 'change-me-admin-link-token'),
+    'code_length': 5,
 }
 
 

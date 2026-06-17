@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Teacher Registration{% endblock %}
+{% block title %}Educator Registration{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -17,25 +17,22 @@
                      class="hero-logo"
                      onerror="this.style.display='none'">
             </div>
-            <div class="hero-badge">AI FOUNDATIONS</div>
+            <div class="hero-badge">MINECRAFT EDUCATION</div>
             <h1 class="hero-title">Certificate of Completion</h1>
             <p class="hero-subtitle">{{ settings.program_tagline }}</p>
             
             <div class="user-journey">
                 <div class="journey-step">
                     <span class="step-number">1</span>
-                    <span class="step-text">Watch the FREE Minecraft Education animations at <a href="https://aka.ms/aiadventurers" target="_blank">aka.ms/aiadventurers</a></span>
+                    <span class="step-text">Complete your Minecraft Education training</span>
                 </div>
                 <div class="journey-step">
                     <span class="step-number">2</span>
-                    <span class="step-text">Download Minecraft Education for FREE from <a href="https://aka.ms/download" target="_blank">aka.ms/download</a>. Then play the FREE Minecraft Education AI game: 
-                        <a href="https://education.minecraft.net/en-us/lessons/fantastic-fairgrounds" target="_blank">Fantastic Fairgrounds</a> or 
-                        <a href="https://education.minecraft.net/en-us/resources/hour-of-ai-the-first-night" target="_blank">Hour of AI: The First Night</a>
-                    </span>
+                    <span class="step-text">Enter your details in the form below</span>
                 </div>
                 <div class="journey-step">
                     <span class="step-number">3</span>
-                    <span class="step-text">Claim your certificate for your school and students below</span>
+                    <span class="step-text">Download your personalised certificate to claim your points</span>
                 </div>
             </div>
         </div>
@@ -45,9 +42,9 @@
     <section class="form-section">
         <div class="form-card">
             <div class="form-header">
-                <h2 class="form-title">Teacher Registration</h2>
+                <h2 class="form-title">Educator Registration</h2>
                 <p class="form-description">
-                    Enter your details to generate your completion certificate and create certificates for your students.
+                    Enter your details to generate your personalised certificate of completion.
                 </p>
                 <p class="privacy-notice">
                     No personal data is stored. Names are used only to generate your certificate PDF.
@@ -56,16 +53,29 @@
 
             <form action="{{ url_for('register') }}" method="POST" class="registration-form">
                 <div class="form-group">
-                    <label for="teacher_name" class="form-label">
-                        Teacher's Full Name
+                    <label for="first_name" class="form-label">
+                        First Name
                     </label>
                     <input type="text" 
-                           id="teacher_name" 
-                           name="teacher_name" 
+                           id="first_name" 
+                           name="first_name" 
                            class="form-input"
-                           placeholder="Enter your full name"
+                           placeholder="Enter your first name"
                            required
-                           autocomplete="name">
+                           autocomplete="given-name">
+                </div>
+
+                <div class="form-group">
+                    <label for="surname" class="form-label">
+                        Surname
+                    </label>
+                    <input type="text" 
+                           id="surname" 
+                           name="surname" 
+                           class="form-input"
+                           placeholder="Enter your surname"
+                           required
+                           autocomplete="family-name">
                 </div>
 
                 <div class="form-group">
@@ -152,8 +162,24 @@
                     </select>
                 </div>
 
+                <div class="form-group">
+                    <label for="claim_code" class="form-label">
+                        Claim Code
+                    </label>
+                    <input type="text" 
+                           id="claim_code" 
+                           name="claim_code" 
+                           class="form-input"
+                           placeholder="Enter the code from your training session"
+                           required
+                           autocomplete="off"
+                           autocapitalize="characters"
+                           spellcheck="false">
+                    <p class="form-hint">This code is provided during the Minecraft Education training session and changes every hour.</p>
+                </div>
+
                 <button type="submit" class="btn btn-primary btn-large">
-                    Generate School Certificate
+                    Generate My Certificate
                 </button>
             </form>
         </div>
@@ -164,16 +190,16 @@
         <h3 class="info-title">What You'll Get</h3>
         <div class="info-cards">
             <div class="info-card">
-                <h4>School Certificate</h4>
-                <p>An official certificate of participation for your school in the AI Foundations program.</p>
+                <h4>Personalised Certificate</h4>
+                <p>An official certificate of completion in your name for Minecraft Education training.</p>
             </div>
             <div class="info-card">
-                <h4>Student Certificates</h4>
-                <p>Individual achievement certificates for each student who completed the program.</p>
+                <h4>Claim Your Points</h4>
+                <p>Use your certificate as evidence to claim professional development points.</p>
             </div>
             <div class="info-card">
-                <h4>PDF Downloads</h4>
-                <p>High-quality A4 PDF certificates ready for printing or digital distribution.</p>
+                <h4>PDF Download</h4>
+                <p>A high-quality A4 PDF certificate ready for printing or digital records.</p>
             </div>
         </div>
     </section>

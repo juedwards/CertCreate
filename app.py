@@ -1,10 +1,10 @@
 """
-Minecraft Education AI Foundations Certificate Generator
-========================================================
-Flask web application for generating participation certificates.
+Minecraft Education Training Certificate Generator
+==================================================
+Flask web application for generating educator certificates of completion.
 """
 
-from flask import Flask, render_template, request, redirect, url_for, send_file, session, flash, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, send_file, session, flash, send_from_directory, abort
 import os
 import uuid
 from datetime import datetime
@@ -18,13 +18,21 @@ from config.settings import (
 )
 
 # Import PDF generator
-from pdf_generator import generate_school_certificate, generate_student_certificate
+from pdf_generator import generate_certificate
 
 # Import data store for tracking certificates
-from data_store import record_school_certificate, record_student_certificate, get_stats
+from data_store import record_certificate, get_stats
 
 # Import profanity filter
 from profanity_filter import check_all_fields, get_polite_rejection_message
+
+# Import claim code helpers
+from claim_code import (
+    get_claim_code,
+    verify_claim_code,
+    is_valid_admin_token,
+    seconds_until_rotation,
+)
 
 app = Flask(__name__)
 app.secret_key = FLASK_SETTINGS['SECRET_KEY']
@@ -50,18 +58,26 @@ def index():
 
 @app.route('/register', methods=['POST'])
 def register():
-    """Process teacher registration and generate school certificate."""
-    teacher_name = request.form.get('teacher_name', '').strip()
+    """Process educator registration and generate their certificate."""
+    first_name = request.form.get('first_name', '').strip()
+    surname = request.form.get('surname', '').strip()
     school_name = request.form.get('school_name', '').strip()
     region = request.form.get('region', '').strip()
+    claim_code = request.form.get('claim_code', '').strip()
     
-    if not teacher_name or not school_name or not region:
+    if not first_name or not surname or not school_name or not region or not claim_code:
         flash('Please fill in all required fields.', 'error')
+        return redirect(url_for('index'))
+    
+    # Verify the daily claim code (only attendees have today's code)
+    if not verify_claim_code(claim_code):
+        flash('Invalid or expired claim code. Please use the code provided during the training session.', 'error')
         return redirect(url_for('index'))
     
     # Check for inappropriate content
     is_clean, field_name, _ = check_all_fields(
-        teacher_name=teacher_name,
+        first_name=first_name,
+        surname=surname,
         school_name=school_name
     )
     if not is_clean:
@@ -69,161 +85,69 @@ def register():
         return redirect(url_for('index'))
     
     # Store in session for later use
-    session['teacher_name'] = teacher_name
+    session['first_name'] = first_name
+    session['surname'] = surname
+    session['teacher_name'] = f"{first_name} {surname}"
     session['school_name'] = school_name
     session['region'] = region
     session['completion_date'] = datetime.now().strftime('%B %d, %Y')
     
     # Generate unique certificate ID
     cert_id = str(uuid.uuid4())[:8].upper()
-    session['school_cert_id'] = cert_id
+    session['cert_id'] = cert_id
     
-    # Generate school certificate PDF
+    # Generate certificate PDF
     try:
-        pdf_filename = f"school_certificate_{cert_id}.pdf"
+        pdf_filename = f"certificate_{cert_id}.pdf"
         pdf_path = os.path.join(get_certificates_dir(), pdf_filename)
         
-        generate_school_certificate(
+        generate_certificate(
+            first_name=first_name,
+            surname=surname,
             school_name=school_name,
-            teacher_name=teacher_name,
             completion_date=session['completion_date'],
             output_path=pdf_path,
             cert_id=cert_id
         )
         
-        session['school_pdf_path'] = pdf_path
-        session['school_pdf_filename'] = pdf_filename
+        session['pdf_path'] = pdf_path
+        session['pdf_filename'] = pdf_filename
         
         # Record certificate in data store (school name, region, and cert ID - no personal data)
-        record_school_certificate(cert_id, school_name, region)
+        record_certificate(cert_id, school_name, region)
         
     except Exception as e:
         flash(f'Error generating certificate: {str(e)}', 'error')
         return redirect(url_for('index'))
     
-    return redirect(url_for('school_certificate'))
+    return redirect(url_for('certificate'))
 
 
-@app.route('/school-certificate')
-def school_certificate():
-    """Display school certificate page with download option."""
-    if 'school_name' not in session:
+@app.route('/certificate')
+def certificate():
+    """Display the certificate page with download option."""
+    if 'teacher_name' not in session:
         flash('Please complete the registration first.', 'error')
         return redirect(url_for('index'))
     
-    return render_template('school_certificate.html',
+    return render_template('certificate.html',
                          teacher_name=session.get('teacher_name'),
                          school_name=session.get('school_name'),
                          completion_date=session.get('completion_date'),
-                         cert_id=session.get('school_cert_id'),
+                         cert_id=session.get('cert_id'),
                          colors=COLORS,
                          settings=CERTIFICATE_SETTINGS)
 
 
-@app.route('/download/school-certificate')
-def download_school_certificate():
-    """Download the school certificate PDF."""
-    pdf_path = session.get('school_pdf_path')
-    pdf_filename = session.get('school_pdf_filename')
+@app.route('/download/certificate')
+def download_certificate():
+    """Download the certificate PDF."""
+    pdf_path = session.get('pdf_path')
+    pdf_filename = session.get('pdf_filename')
     
     if not pdf_path or not os.path.exists(pdf_path):
         flash('Certificate not found. Please generate a new one.', 'error')
         return redirect(url_for('index'))
-    
-    return send_file(
-        pdf_path,
-        mimetype='application/pdf',
-        as_attachment=True,
-        download_name=pdf_filename
-    )
-
-
-@app.route('/student-certificates')
-def student_certificates():
-    """Student certificate generation page."""
-    if 'school_name' not in session:
-        flash('Please complete the school registration first.', 'error')
-        return redirect(url_for('index'))
-    
-    return render_template('student_certificates.html',
-                         school_name=session.get('school_name'),
-                         teacher_name=session.get('teacher_name'),
-                         colors=COLORS,
-                         settings=CERTIFICATE_SETTINGS)
-
-
-@app.route('/generate-student-certificate', methods=['POST'])
-def generate_student_cert():
-    """Generate a student certificate."""
-    if 'school_name' not in session:
-        flash('Please complete the school registration first.', 'error')
-        return redirect(url_for('index'))
-    
-    student_name = request.form.get('student_name', '').strip()
-    
-    if not student_name:
-        flash('Please enter the student\'s first name.', 'error')
-        return redirect(url_for('student_certificates'))
-    
-    # Check for inappropriate content
-    is_clean, _, _ = check_all_fields(student_name=student_name)
-    if not is_clean:
-        flash(get_polite_rejection_message(), 'error')
-        return redirect(url_for('student_certificates'))
-    
-    # Generate unique certificate ID
-    cert_id = str(uuid.uuid4())[:8].upper()
-    
-    # Generate student certificate PDF
-    try:
-        pdf_filename = f"student_certificate_{student_name.replace(' ', '_')}_{cert_id}.pdf"
-        pdf_path = os.path.join(get_certificates_dir(), pdf_filename)
-        
-        generate_student_certificate(
-            student_name=student_name,
-            school_name=session.get('school_name'),
-            output_path=pdf_path,
-            cert_id=cert_id
-        )
-        
-        # Store for download
-        session['last_student_pdf_path'] = pdf_path
-        session['last_student_pdf_filename'] = pdf_filename
-        session['last_student_name'] = student_name
-        
-        # Record certificate in data store (only school name and cert ID, NOT student name)
-        record_student_certificate(cert_id, session.get('school_name'))
-        
-    except Exception as e:
-        flash(f'Error generating certificate: {str(e)}', 'error')
-        return redirect(url_for('student_certificates'))
-    
-    return redirect(url_for('student_certificate_ready'))
-
-
-@app.route('/student-certificate-ready')
-def student_certificate_ready():
-    """Display student certificate ready page."""
-    if 'last_student_name' not in session:
-        flash('No student certificate generated.', 'error')
-        return redirect(url_for('student_certificates'))
-    
-    return render_template('student_certificate_ready.html',
-                         student_name=session.get('last_student_name'),
-                         school_name=session.get('school_name'),
-                         colors=COLORS,
-                         settings=CERTIFICATE_SETTINGS)
-
-
-@app.route('/download/student-certificate')
-def download_student_certificate():
-    """Download the student certificate PDF."""
-    pdf_path = session.get('last_student_pdf_path')
-    pdf_filename = session.get('last_student_pdf_filename')
-    
-    if not pdf_path or not os.path.exists(pdf_path):
-        flash('Certificate not found. Please generate a new one.', 'error')
-        return redirect(url_for('student_certificates'))
     
     return send_file(
         pdf_path,
@@ -246,6 +170,20 @@ def stats():
     certificate_stats = get_stats()
     return render_template('stats.html',
                          stats=certificate_stats,
+                         colors=COLORS,
+                         settings=CERTIFICATE_SETTINGS)
+
+
+@app.route('/claim-code/<token>')
+def claim_code_admin(token):
+    """Hidden page showing today's claim code (guarded by a secret token)."""
+    if not is_valid_admin_token(token):
+        abort(404)
+    
+    return render_template('claim_code_admin.html',
+                         claim_code=get_claim_code(),
+                         today=datetime.now().strftime('%B %d, %Y %H:%M'),
+                         seconds_until_rotation=seconds_until_rotation(),
                          colors=COLORS,
                          settings=CERTIFICATE_SETTINGS)
 

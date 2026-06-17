@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Today's Claim Code{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section class="page-header">
+        <h1 class="page-title">Today's Claim Code</h1>
+        <p class="page-subtitle">Share this code with attendees during the training session</p>
+    </section>
+
+    <section class="form-section">
+        <div class="form-card" style="text-align: center;">
+            <p class="form-description">Valid for the current hour ({{ today }})</p>
+
+            <div class="claim-code-display" id="claim-code">{{ claim_code }}</div>
+
+            <p class="form-hint">
+                This code rotates automatically at the top of each hour (server time).
+                <br>Rotates in <span id="countdown">&hellip;</span>.
+            </p>
+
+            <p class="privacy-notice">
+                Keep this page private. Anyone with this link can see the current code.
+            </p>
+        </div>
+    </section>
+</div>
+
+<script>
+    (function () {
+        var remaining = {{ seconds_until_rotation | int }};
+        var el = document.getElementById('countdown');
+        function tick() {
+            if (remaining <= 0) {
+                // Code has rotated - reload to show the new one
+                window.location.reload();
+                return;
+            }
+            var h = Math.floor(remaining / 3600);
+            var m = Math.floor((remaining % 3600) / 60);
+            var s = remaining % 60;
+            el.textContent = h + 'h ' + m + 'm ' + s + 's';
+            remaining -= 1;
+        }
+        tick();
+        setInterval(tick, 1000);
+    })();
+</script>
+
+<style>
+    .claim-code-display {
+        font-size: 3.5rem;
+        font-weight: 800;
+        letter-spacing: 0.4rem;
+        color: var(--mc-green-primary);
+        background: rgba(60, 179, 74, 0.1);
+        border: 2px dashed var(--mc-green-primary);
+        border-radius: 8px;
+        padding: var(--spacing-xl) var(--spacing-lg);
+        margin: var(--spacing-lg) 0;
+        font-family: 'Courier New', monospace;
+    }
+</style>
+{% endblock %}

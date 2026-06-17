@@ -1,12 +1,14 @@
-# Minecraft Education AI Foundations Certificate Generator
+# Minecraft Education Training Certificate Generator
 
-A Flask web application for generating participation certificates for the Minecraft Education 'AI Foundations' program.
+A Flask web application for generating personalised certificates of completion for
+educators who have completed Minecraft Education training (e.g. at ISTE).
 
 ## Features
 
-- **Teacher Registration**: Simple form to register school and teacher information
-- **School Certificates**: Generate A4 PDF certificates of participation for schools
-- **Student Certificates**: Generate individual achievement certificates for students
+- **Educator Registration**: Simple form for first name, surname, school and country
+- **Hourly Claim Code**: Attendees must enter a rotating hourly code; organisers view it via a hidden link
+- **Certificate of Completion**: Generate a personalised A4 PDF certificate
+- **Statistics**: View certificate counts and a global country breakdown at `/stats`
 - **Configurable Branding**: Easy-to-update logo paths and certificate settings
 - **Minecraft Education Theme**: Styled with official branding colors and design patterns
 
@@ -79,10 +81,10 @@ Edit `app/config/settings.py` to customize:
 
 ```python
 CERTIFICATE_SETTINGS = {
-    'program_name': 'AI Foundations',
-    'program_tagline': 'Building Digital Skills and AI Literacy with Minecraft',
-    'school_certificate_title': 'Certificate of Participation',
-    'student_certificate_title': 'Certificate of Achievement',
+    'program_name': 'Minecraft Education',
+    'program_tagline': 'Claim your credential for completing Minecraft Education training',
+    'certificate_title': 'Certificate of Completion',
+    'certificate_message': 'This credential certifies that {name} from {school_name} has successfully completed Minecraft Education training.',
     # ... more settings
 }
 ```
@@ -102,22 +104,37 @@ COLORS = {
 
 ## Usage Flow
 
-1. **Step 1**: Teacher enters their name and school name
-2. **Step 2**: School certificate is generated and can be downloaded
-3. **Step 3**: Option to create individual student certificates
-4. **Step 4**: Enter student's first name and download their certificate
+1. **Step 1**: Educator completes Minecraft Education training
+2. **Step 2**: Organiser shares the current hour's claim code (from the hidden admin link) with attendees
+3. **Step 3**: Educator enters their first name, surname, school, country and the claim code
+4. **Step 4**: Personalised certificate of completion is generated and can be downloaded
+
+## Claim Code
+
+Attendees must enter an **hourly-rotating claim code** to generate a certificate, so only
+people present at the session can claim one. The code is derived from a server secret and
+the current hour (no state is stored) and changes automatically at the top of each hour
+(server time).
+
+- **View the current code**: visit the hidden link `/claim-code/<admin_token>`, where
+  `<admin_token>` is the secret token configured below. An invalid token returns 404.
+- **Configure** via environment variables (recommended for production):
+  - `CLAIM_CODE_SECRET` — seeds code generation; keep private.
+  - `CLAIM_CODE_ADMIN_TOKEN` — the unguessable token used in the hidden URL.
+
+  These default to placeholder values in `config/settings.py` (`CLAIM_CODE_SETTINGS`)
+  and **must be changed in production**.
 
 ## API Endpoints
 
 | Route | Method | Description |
 |-------|--------|-------------|
 | `/` | GET | Home page with registration form |
-| `/register` | POST | Process registration and generate school certificate |
-| `/school-certificate` | GET | Display school certificate |
-| `/download/school-certificate` | GET | Download school certificate PDF |
-| `/student-certificates` | GET | Student certificate form |
-| `/generate-student-certificate` | POST | Generate student certificate |
-| `/download/student-certificate` | GET | Download student certificate PDF |
+| `/register` | POST | Process registration (validates claim code) and generate the certificate |
+| `/certificate` | GET | Display the generated certificate |
+| `/download/certificate` | GET | Download the certificate PDF |
+| `/claim-code/<admin_token>` | GET | Hidden page showing the current hour's claim code |
+| `/stats` | GET | Certificate statistics and country breakdown |
 | `/new-session` | GET | Clear session and start over |
 
 ## Production Deployment

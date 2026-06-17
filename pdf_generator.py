@@ -172,8 +172,8 @@ class CertificateGenerator:
         return y_position - 70
 
 
-def generate_school_certificate(school_name, teacher_name, completion_date, output_path, cert_id):
-    """Generate a school certificate of participation."""
+def generate_certificate(first_name, surname, school_name, completion_date, output_path, cert_id):
+    """Generate a personalised educator certificate of completion."""
     
     c = canvas.Canvas(output_path, pagesize=landscape(A4))
     page_width, page_height = landscape(A4)
@@ -201,132 +201,23 @@ def generate_school_certificate(school_name, teacher_name, completion_date, outp
     # Certificate title
     c.setFont("Helvetica-Bold", 32)
     c.setFillColor(generator.primary_green)
-    c.drawCentredString(page_width / 2, y, CERTIFICATE_SETTINGS['school_certificate_title'].upper())
+    c.drawCentredString(page_width / 2, y, CERTIFICATE_SETTINGS['certificate_title'].upper())
     y -= 50
     
-    # "This certifies that"
+    # "This credential certifies that"
     c.setFont("Helvetica", 14)
     c.setFillColor(generator.text_muted)
-    c.drawCentredString(page_width / 2, y, "This certifies that")
-    y -= 40
+    c.drawCentredString(page_width / 2, y, "This credential certifies that")
+    y -= 45
     
-    # School name
-    c.setFont("Helvetica-Bold", 28)
-    c.setFillColor(generator.text_dark)
-    
-    # Handle long school names
-    if len(school_name) > 30:
-        c.setFont("Helvetica-Bold", 22)
-    c.drawCentredString(page_width / 2, y, school_name)
-    y -= 35
-    
-    # "represented by"
-    c.setFont("Helvetica", 14)
-    c.setFillColor(generator.text_muted)
-    c.drawCentredString(page_width / 2, y, "represented by")
-    y -= 35
-    
-    # Teacher name
-    c.setFont("Helvetica-Bold", 22)
-    c.setFillColor(generator.accent_blue)
-    c.drawCentredString(page_width / 2, y, teacher_name)
-    y -= 50
-    
-    # Completion message
-    c.setFont("Helvetica", 12)
-    c.setFillColor(generator.text_muted)
-    message_lines = [
-        "has successfully participated in the",
-        "AI Foundations program,",
-        "demonstrating commitment to building",
-        "AI literacy and digital skills with Minecraft Education."
-    ]
-    for line in message_lines:
-        c.drawCentredString(page_width / 2, y, line)
-        y -= 18
-    
-    y -= 20
-    
-    # Seal
-    y = generator.draw_seal(c, y)
-    y -= 10
-    
-    # Footer info
-    footer_y = 80
-    
-    # Date
-    c.setFont("Helvetica", 10)
-    c.setFillColor(generator.text_muted)
-    c.drawCentredString(page_width / 4, footer_y + 20, "DATE OF COMPLETION")
-    c.setFont("Helvetica-Bold", 12)
-    c.setFillColor(generator.text_dark)
-    c.drawCentredString(page_width / 4, footer_y, completion_date)
-    
-    # Certificate ID
-    c.setFont("Helvetica", 10)
-    c.setFillColor(generator.text_muted)
-    c.drawCentredString(3 * page_width / 4, footer_y + 20, "CERTIFICATE ID")
-    c.setFont("Helvetica-Bold", 12)
-    c.setFillColor(generator.text_dark)
-    c.drawCentredString(3 * page_width / 4, footer_y, cert_id)
-    
-    # Footer text
-    c.setFont("Helvetica", 8)
-    c.setFillColor(generator.text_muted)
-    c.drawCentredString(page_width / 2, 45, CERTIFICATE_SETTINGS['footer_text'])
-    
-    c.save()
-    return output_path
-
-
-def generate_student_certificate(student_name, school_name, output_path, cert_id):
-    """Generate a student certificate of achievement."""
-    
-    c = canvas.Canvas(output_path, pagesize=landscape(A4))
-    page_width, page_height = landscape(A4)
-    
-    generator = CertificateGenerator(output_path)
-    
-    # Background - white
-    c.setFillColor(colors.white)
-    c.rect(0, 0, page_width, page_height, fill=1, stroke=0)
-    
-    # Draw border
-    generator.draw_border(c)
-    
-    # Starting Y position (below border)
-    y = page_height - 120
-    
-    # Logo
-    y = generator.draw_logo(c, y)
-    y -= 30
-    
-    # Program badge
-    y = generator.draw_program_badge(c, y)
-    y -= 20
-    
-    # Certificate title
+    # Educator's full name (prominent)
+    full_name = f"{first_name} {surname}".strip()
     c.setFont("Helvetica-Bold", 32)
-    c.setFillColor(generator.primary_green)
-    c.drawCentredString(page_width / 2, y, CERTIFICATE_SETTINGS['student_certificate_title'].upper())
-    y -= 50
-    
-    # "This certifies that"
-    c.setFont("Helvetica", 14)
-    c.setFillColor(generator.text_muted)
-    c.drawCentredString(page_width / 2, y, "This certifies that")
-    y -= 50
-    
-    # Student name (prominent) - using certificate gold
-    c.setFont("Helvetica-Bold", 36)
-    c.setFillColor(generator.cert_gold)
-    
-    # Add shadow effect for student name
-    c.setFillColor(colors.Color(0.3, 0.3, 0.3, 0.3))
-    c.drawCentredString(page_width / 2 + 2, y - 2, student_name)
-    c.setFillColor(generator.cert_gold)
-    c.drawCentredString(page_width / 2, y, student_name)
-    y -= 40
+    c.setFillColor(generator.text_dark)
+    if len(full_name) > 30:
+        c.setFont("Helvetica-Bold", 24)
+    c.drawCentredString(page_width / 2, y, full_name)
+    y -= 35
     
     # "from"
     c.setFont("Helvetica", 14)
@@ -335,25 +226,23 @@ def generate_student_certificate(student_name, school_name, output_path, cert_id
     y -= 35
     
     # School name
-    c.setFont("Helvetica-Bold", 20)
-    c.setFillColor(generator.primary_green)
+    c.setFont("Helvetica-Bold", 22)
+    c.setFillColor(generator.accent_blue)
     if len(school_name) > 35:
-        c.setFont("Helvetica-Bold", 16)
+        c.setFont("Helvetica-Bold", 18)
     c.drawCentredString(page_width / 2, y, school_name)
     y -= 50
     
     # Completion message
-    c.setFont("Helvetica", 12)
+    c.setFont("Helvetica", 13)
     c.setFillColor(generator.text_muted)
     message_lines = [
-        "has successfully completed the",
-        "AI Foundations program,",
-        "building AI literacy and digital skills",
-        "with Minecraft Education."
+        "has successfully completed",
+        "Minecraft Education training.",
     ]
     for line in message_lines:
         c.drawCentredString(page_width / 2, y, line)
-        y -= 18
+        y -= 20
     
     y -= 20
     
@@ -364,10 +253,9 @@ def generate_student_certificate(student_name, school_name, output_path, cert_id
     footer_y = 80
     
     # Date
-    completion_date = datetime.now().strftime('%B %d, %Y')
     c.setFont("Helvetica", 10)
     c.setFillColor(generator.text_muted)
-    c.drawCentredString(page_width / 4, footer_y + 20, "DATE")
+    c.drawCentredString(page_width / 4, footer_y + 20, "DATE OF COMPLETION")
     c.setFont("Helvetica-Bold", 12)
     c.setFillColor(generator.text_dark)
     c.drawCentredString(page_width / 4, footer_y, completion_date)

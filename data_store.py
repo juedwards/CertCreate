@@ -55,14 +55,14 @@ def _save_data(data):
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
-def record_school_certificate(cert_id, school_name, region=None):
+def record_certificate(cert_id, school_name, region=None):
     """
-    Record a school certificate.
+    Record a certificate.
     
     Args:
         cert_id: Unique certificate ID
         school_name: Name of the school
-        region: UK region (England, Wales, Northern Ireland, Scotland)
+        region: Country/region selected by the educator
     """
     with _lock:
         data = _load_data()
@@ -73,26 +73,6 @@ def record_school_certificate(cert_id, school_name, region=None):
             'date': datetime.now().isoformat()
         }
         data['stats']['total_school_certificates'] = len(data['school_certificates'])
-        
-        _save_data(data)
-
-
-def record_student_certificate(cert_id, school_name):
-    """
-    Record a student certificate.
-    
-    Args:
-        cert_id: Unique certificate ID
-        school_name: Name of the school (not student name)
-    """
-    with _lock:
-        data = _load_data()
-        
-        data['student_certificates'][cert_id] = {
-            'school_name': school_name,
-            'date': datetime.now().isoformat()
-        }
-        data['stats']['total_student_certificates'] = len(data['student_certificates'])
         
         _save_data(data)
 
@@ -178,14 +158,8 @@ def get_certificate_info(cert_id):
         
         if cert_id in data['school_certificates']:
             return {
-                'type': 'school',
+                'type': 'certificate',
                 **data['school_certificates'][cert_id]
-            }
-        
-        if cert_id in data['student_certificates']:
-            return {
-                'type': 'student',
-                **data['student_certificates'][cert_id]
             }
         
         return None

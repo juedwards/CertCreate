@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}School Certificate{% endblock %}
+{% block title %}Your Certificate{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -8,7 +8,7 @@
     <section class="success-header">
         <div class="success-icon">✅</div>
         <h1 class="success-title">Certificate Generated!</h1>
-        <p class="success-subtitle">Your school certificate is ready for download</p>
+        <p class="success-subtitle">Your certificate of completion is ready for download</p>
     </section>
 
     <!-- Certificate Preview -->
@@ -29,19 +29,19 @@
             
             <div class="preview-badge">{{ settings.program_name }}</div>
             
-            <h2 class="preview-title">{{ settings.school_certificate_title }}</h2>
+            <h2 class="preview-title">{{ settings.certificate_title }}</h2>
             
-            <p class="preview-text">This certifies that</p>
+            <p class="preview-text">This credential certifies that</p>
             
-            <h3 class="preview-school-name">{{ school_name }}</h3>
+            <h3 class="preview-teacher-name">{{ teacher_name }}</h3>
             
-            <p class="preview-text">represented by</p>
+            <p class="preview-text">from</p>
             
-            <h4 class="preview-teacher-name">{{ teacher_name }}</h4>
+            <h4 class="preview-school-name">{{ school_name }}</h4>
             
             <p class="preview-text">
-                has successfully participated in the<br>
-                <strong>AI Foundations</strong> program
+                has successfully completed<br>
+                <strong>Minecraft Education</strong> training
             </p>
             
             <div class="preview-footer">
@@ -60,18 +60,18 @@
     <!-- Actions -->
     <section class="actions-section">
         <div class="actions-card">
-            <a href="{{ url_for('download_school_certificate') }}" class="btn btn-primary btn-large">
+            <a href="{{ url_for('download_certificate') }}" class="btn btn-primary btn-large">
                 <span class="btn-icon">⬇️</span>
-                Download School Certificate (PDF)
+                Download Certificate (PDF)
             </a>
             
             <div class="actions-divider">
-                <span>Next Step</span>
+                <span>or</span>
             </div>
             
-            <a href="{{ url_for('student_certificates') }}" class="btn btn-secondary btn-large">
-                <span class="btn-icon">🎓</span>
-                Create Student Certificates
+            <a href="{{ url_for('new_session') }}" class="btn btn-secondary btn-large">
+                <span class="btn-icon">🔄</span>
+                Create Another Certificate
             </a>
         </div>
     </section>
@@ -80,9 +80,10 @@
     <section class="info-box">
         <div class="info-box-icon">💡</div>
         <div class="info-box-content">
-            <h4>What's Next?</h4>
-            <p>You can now generate individual certificates for each student who participated in the AI Foundations program. 
-               Click "Create Student Certificates" to proceed.</p>
+            <h4>Claiming your points</h4>
+            <p>Download your A4 PDF certificate and keep it for your records. You can use it
+               as evidence to claim professional development points for completing
+               Minecraft Education training.</p>
         </div>
     </section>
 </div>
