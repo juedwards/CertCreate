@@ -174,7 +174,7 @@ def stats():
                          settings=CERTIFICATE_SETTINGS)
 
 
-@app.route('/claim-code/<token>')
+@app.route('/claim-code/<token>', strict_slashes=False)
 def claim_code_admin(token):
     """Hidden page showing today's claim code (guarded by a secret token)."""
     if not is_valid_admin_token(token):
